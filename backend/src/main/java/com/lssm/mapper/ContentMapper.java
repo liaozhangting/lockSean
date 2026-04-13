@@ -16,23 +16,20 @@ public interface ContentMapper extends BaseMapper<Content> {
      * 避免深分页的全表扫描问题
      */
     @Select("SELECT * FROM tb_content " +
-            "WHERE deleted = 0 " +
-            "AND id < #{lastId} " +
-            "ORDER BY id DESC " +
-            "LIMIT #{pageSize}")
-    Page<Content> selectCursorPage(@Param("lastId") Long lastId, @Param("pageSize") Integer pageSize);
+            "WHERE id < #{lastId} " +
+            "ORDER BY id DESC")
+    IPage<Content> selectCursorPage(IPage<Content> page, @Param("lastId") Long lastId, @Param("pageSize") Integer pageSize);
     
     /**
      * 游标分页查询（带筛选条件）
      */
     @Select("SELECT * FROM tb_content " +
-            "WHERE deleted = 0 " +
-            "AND id < #{lastId} " +
+            "WHERE id < #{lastId} " +
             "AND (#{userId} IS NULL OR author_id = #{userId}) " +
             "AND (#{type} IS NULL OR type = #{type}) " +
-            "ORDER BY id DESC " +
-            "LIMIT #{pageSize}")
-    Page<Content> selectCursorPageWithFilters(@Param("lastId") Long lastId, 
+            "ORDER BY id DESC")
+    IPage<Content> selectCursorPageWithFilters(IPage<Content> page, 
+                                               @Param("lastId") Long lastId, 
                                                @Param("userId") Long userId,
                                                @Param("type") String type,
                                                @Param("pageSize") Integer pageSize);
@@ -41,15 +38,13 @@ public interface ContentMapper extends BaseMapper<Content> {
      * 首页推荐游标分页（按ID倒序）
      */
     @Select("SELECT * FROM tb_content " +
-            "WHERE deleted = 0 " +
-            "AND id < #{lastId} " +
-            "ORDER BY id DESC " +
-            "LIMIT #{pageSize}")
-    Page<Content> selectHomeRecommendCursor(@Param("lastId") Long lastId, @Param("pageSize") Integer pageSize);
+            "WHERE id < #{lastId} " +
+            "ORDER BY id DESC")
+    IPage<Content> selectHomeRecommendCursor(IPage<Content> page, @Param("lastId") Long lastId, @Param("pageSize") Integer pageSize);
     
     /**
      * 统计总数（用于分页导航）
      */
-    @Select("SELECT COUNT(*) FROM tb_content WHERE deleted = 0")
+    @Select("SELECT COUNT(*) FROM tb_content")
     Long selectTotalCount();
 }

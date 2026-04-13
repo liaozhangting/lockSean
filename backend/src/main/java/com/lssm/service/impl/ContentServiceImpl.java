@@ -2,6 +2,7 @@ package com.lssm.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -219,8 +220,8 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
         }
         
         // 使用游标分页查询
-        Page<Content> page = new Page<>(1, pageCursor.getPageSize()); // page参数不影响，只是占位
-        Page<Content> result = contentMapper.selectHomeRecommendCursor(lastId, pageCursor.getPageSize());
+        Page<Content> page = new Page<>(1, pageCursor.getPageSize());
+        IPage<Content> result = contentMapper.selectHomeRecommendCursor(page, lastId, pageCursor.getPageSize());
         
         log.info("游标分页查询首页推荐 lastId={}, pageSize={}, resultSize={}", 
                 lastId, pageCursor.getPageSize(), result.getRecords().size());
@@ -250,7 +251,9 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
             lastId = Long.MAX_VALUE;
         }
         
-        Page<Content> result = contentMapper.selectCursorPageWithFilters(
+        Page<Content> page = new Page<>(1, pageCursor.getPageSize());
+        IPage<Content> result = contentMapper.selectCursorPageWithFilters(
+                page,
                 lastId,
                 pageCursor.getUserId(),
                 pageCursor.getType(),

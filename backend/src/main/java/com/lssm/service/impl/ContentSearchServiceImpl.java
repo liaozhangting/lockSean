@@ -140,7 +140,6 @@ public class ContentSearchServiceImpl implements ContentSearchService {
         try {
             // 获取所有内容
             LambdaQueryWrapper<Content> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Content::getDeleted, 0);
             List<Content> contents = contentMapper.selectList(wrapper);
             
             // 转换并批量保存
