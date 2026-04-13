@@ -31,4 +31,9 @@ public interface ContentService {
      * 获取用户内容列表（游标分页）
      */
     Result<List<Content>> getUserContents(PageCursorDTO pageCursor);
+
+    /**
+     * 点赞/取消点赞
+     */
+    Result<String> likeContent(Long contentId);
 }

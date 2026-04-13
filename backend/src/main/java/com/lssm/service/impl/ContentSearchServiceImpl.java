@@ -87,14 +87,16 @@ public class ContentSearchServiceImpl implements ContentSearchService {
             
             query.setPageable(PageRequest.of(from / searchDTO.getPageSize(), searchDTO.getPageSize()));
             
+            long startTime = System.currentTimeMillis();
             SearchHits<ContentDocument> searchHits = elasticsearchOperations.search(query, ContentDocument.class);
+            long costTime = System.currentTimeMillis() - startTime;
             
             List<ContentDocument> results = searchHits.getSearchHits().stream()
                     .map(SearchHit::getContent)
                     .collect(Collectors.toList());
             
             log.info("ES搜索完成 keyword={}, total={}, cost={}ms", 
-                    searchDTO.getKeyword(), searchHits.getTotalHits(), searchHits.getTime());
+                    searchDTO.getKeyword(), searchHits.getTotalHits(), costTime);
             
             return Result.success(results);
         } catch (Exception e) {
@@ -159,11 +161,11 @@ public class ContentSearchServiceImpl implements ContentSearchService {
     private ContentDocument convertToDocument(Content content) {
         ContentDocument doc = new ContentDocument();
         doc.setId(content.getId());
-        doc.setUserId(content.getUserId());
+        doc.setUserId(content.getAuthorId());
         doc.setTitle(content.getTitle());
         doc.setContent(content.getContent());
         doc.setType(content.getType());
-        doc.setMediaUrl(content.getMediaUrl());
+        doc.setMediaUrl(content.getVideoUrl());
         doc.setLikeCount(content.getLikeCount());
         doc.setCommentCount(content.getCommentCount());
         doc.setCollectCount(content.getCollectCount());

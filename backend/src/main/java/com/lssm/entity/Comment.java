@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @TableName("comment")
 public class Comment {
     
-    @TableId(type = IdType.INCREMENT)
+    @TableId(type = IdType.AUTO)
     private Long id;
     
     /** 内容ID */

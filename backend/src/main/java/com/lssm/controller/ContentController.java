@@ -69,4 +69,11 @@ public class ContentController {
         pageCursor.setPageSize(pageSize);
         return contentService.getUserContents(pageCursor);
     }
+
+    @Operation(summary = "点赞/取消点赞")
+    @PutMapping("/like/{contentId}")
+    public Result<String> likeContent(
+            @Parameter(description = "内容ID") @PathVariable Long contentId) {
+        return contentService.likeContent(contentId);
+    }
 }

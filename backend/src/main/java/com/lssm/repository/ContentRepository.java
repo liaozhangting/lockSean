@@ -20,10 +20,10 @@ public interface ContentRepository extends ElasticsearchRepository<ContentDocume
     /**
      * 根据作者ID搜索内容
      */
-    List<ContentDocument> findByAuthorId(Long authorId);
+    List<ContentDocument> findByUserId(Long authorId);
 
     /**
      * 删除作者的所有内容索引
      */
-    void deleteByAuthorId(Long authorId);
+    void deleteByUserId(Long authorId);
 }

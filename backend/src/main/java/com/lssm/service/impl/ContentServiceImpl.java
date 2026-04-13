@@ -2,6 +2,7 @@ package com.lssm.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -335,6 +336,25 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     private void cacheToRedis(long contentId, ContentVO contentVO) {
         String key = CONTENT_DETAIL_KEY + contentId;
         redisTemplate.opsForValue().set(key, contentVO, DETAIL_EXPIRE, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public Result<String> likeContent(Long contentId) {
+        try {
+            Content content = this.getById(contentId);
+            if (content == null) {
+                return Result.error("内容不存在");
+            }
+            // 简单实现：点赞数+1
+            content.setLikeCount(content.getLikeCount() == null ? 1 : content.getLikeCount() + 1);
+            this.updateById(content);
+            // 清除缓存
+            redisTemplate.delete(CONTENT_DETAIL_KEY + contentId);
+            return Result.success("点赞成功");
+        } catch (Exception e) {
+            log.error("点赞失败 contentId={}", contentId, e);
+            return Result.error("系统繁忙，请稍后重试");
+        }
     }
 
 
