@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,6 +19,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/test")
 @Tag(name = "测试接口", description = "用于测试限流等功能")
 public class TestController {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @RateLimit(key = "hello", maxCount = 10, window = 60, message = "你好接口请求过于频繁")
     @Operation(summary = "测试限流 - 你好接口")
@@ -40,5 +49,35 @@ public class TestController {
     public Result<String> defaultLimit() {
         log.info("defaultLimit 接口被调用");
         return Result.success("默认限流测试成功!");
+    }
+
+    @Operation(summary = "测试 Redis 连接")
+    @GetMapping("/redis/ping")
+    public Result<String> redisPing() {
+        try {
+            String result = redisTemplate.opsForValue().get("ping");
+            if (result == null) {
+                redisTemplate.opsForValue().set("ping", "pong");
+                result = "pong";
+            }
+            log.info("Redis 连接成功: {}", result);
+            return Result.success("Redis 连接成功: " + result);
+        } catch (Exception e) {
+            log.error("Redis 连接失败", e);
+            return Result.error("Redis 连接失败: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "测试 Kafka 连接")
+    @GetMapping("/kafka/ping")
+    public Result<String> kafkaPing() {
+        try {
+            kafkaTemplate.send("test-topic", "ping", "Hello Kafka");
+            log.info("Kafka 连接成功");
+            return Result.success("Kafka 连接成功，消息已发送");
+        } catch (Exception e) {
+            log.error("Kafka 连接失败", e);
+            return Result.error("Kafka 连接失败: " + e.getMessage());
+        }
     }
 }
