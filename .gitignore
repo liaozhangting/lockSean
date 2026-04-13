@@ -1,33 +1,39 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Monorepo root
+*.log
+.DS_Store
 
-### STS ###
-.apt_generated
+# Backend (Spring Boot)
+backend/HELP.md
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/**/target/
+backend/**/build/
+backend/*.iml
+backend/.idea
+
+# Frontend (Vue)
+frontend/node_modules/
+frontend/dist/
+frontend/*.local
+frontend/.vscode/*
+!frontend/.vscode/extensions.json
+frontend/.vscode/settings.json
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+*.iws
+.project
 .classpath
 .factorypath
-.project
 .settings
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+# Application configs (contain secrets)
+**/application-local.yaml
+**/application-local.yml
+**/application-dev.yaml
+**/application-dev.yml
